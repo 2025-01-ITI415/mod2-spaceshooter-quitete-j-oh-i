@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 
@@ -109,6 +110,8 @@ public class Weapon : MonoBehaviour
         weaponModel.transform.localPosition = Vector3.zero;
         weaponModel.transform.localScale = Vector3.one;
 
+
+
         nextShotTime = 0; // You can fire immediately after _type is set.    // h
     }
 
@@ -138,6 +141,13 @@ public class Weapon : MonoBehaviour
                 p = MakeProjectile();
                 p.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
                 p.vel = p.transform.rotation * vel;
+                break;
+
+            case eWeaponType.missile:
+                p = MakeProjectile();
+                p.vel = vel;
+                // Change the color of the missile
+                p.material.color = Color.yellow;
                 break;
 
         }
