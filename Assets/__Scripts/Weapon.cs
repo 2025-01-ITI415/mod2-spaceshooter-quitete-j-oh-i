@@ -146,8 +146,6 @@ public class Weapon : MonoBehaviour
             case eWeaponType.missile:
                 p = MakeProjectile();
                 p.vel = vel;
-                // Change the color of the missile
-                p.material.color = Color.yellow;
                 break;
 
         }
