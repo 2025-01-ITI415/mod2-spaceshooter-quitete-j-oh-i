@@ -15,7 +15,7 @@ public class ProjectileHero : MonoBehaviour
 
     //Addition 1
     // Homing parameters
-    public float homingStrength = 0.1f; // Controls how fast the missile tracks the target
+    public float homingStrength = 0.5f; // Controls how fast the missile tracks the target
     private Transform target;        // The target the missile is homing towards
 
     // This public property masks the private field _type
