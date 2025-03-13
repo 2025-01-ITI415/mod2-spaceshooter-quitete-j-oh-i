@@ -77,8 +77,13 @@ public class Enemy : MonoBehaviour
                         calledShipDestroyed = true;
                         Main.SHIP_DESTROYED(this);
                     }
-                    // Destroy this Enemy
-                    Destroy(this.gameObject);
+
+                    if (Score.instance != null) // Check if ScoreManager exists before calling it
+                    {
+                        Score.instance.AddScore(score);
+                    }
+
+                    Destroy(this.gameObject); // Destroy enemy after scoring
                 }
             }
             // Destroy the ProjectileHero regardless

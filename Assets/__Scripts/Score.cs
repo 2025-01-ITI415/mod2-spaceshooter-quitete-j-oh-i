@@ -1,5 +1,5 @@
 using UnityEngine;
-using TMPro; // Import TextMeshPro namespace
+using TMPro;
 
 public class Score : MonoBehaviour
 {
@@ -11,12 +11,21 @@ public class Score : MonoBehaviour
     {
         if (instance == null)
         {
-            instance = this; // Assign instance for global access
+            instance = this;
+            DontDestroyOnLoad(gameObject); // Keeps the Score object across scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Prevents duplicates
         }
     }
 
     void Start()
     {
+        if (scoreText == null)
+        {
+            scoreText = FindObjectOfType<TextMeshProUGUI>(); // Auto-assign if not set
+        }
         UpdateScoreText();
     }
 
@@ -28,6 +37,9 @@ public class Score : MonoBehaviour
 
     void UpdateScoreText()
     {
-        scoreText.text = "Score: " + score;
+        if (scoreText != null)
+        {
+            scoreText.text = "Score: " + score;
+        }
     }
 }
