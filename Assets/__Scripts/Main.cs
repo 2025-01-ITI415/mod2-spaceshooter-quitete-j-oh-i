@@ -12,9 +12,13 @@ public class Main : MonoBehaviour
 
     [Header("Inscribed")]
     public bool spawnEnemies = true;
-    public GameObject[] prefabEnemies;               // Array of Enemy prefabs
-    public float enemySpawnPerSecond = 0.5f;  // # Enemies spawned/second
-    public float enemyInsetDefault = 1.5f;    // Inset from the sides
+
+    //change this code so you can place the prefab enemies and a number that says how often they show up. 
+    //the higher, the number the more they show up, and the chance is calculated by adding all of the numbers, and dividing by the sum
+
+    public GameObject[] prefabEnemies;        
+    public float enemySpawnPerSecond = 0.5f;  
+    public float enemyInsetDefault = 1.5f;    
     public float gameRestartDelay = 2.0f;
     public GameObject prefabPowerUp;
     public WeaponDefinition[] weaponDefinitions;
