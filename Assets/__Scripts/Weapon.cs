@@ -4,11 +4,13 @@ using System.Reflection;
 using UnityEngine;
 
 
-/// <summary
+/// <summary>
 /// This is an enum of the various possible weapon types.
 /// It also includes a "shield" type to allow a shield PowerUp.
 /// Items marked [NI] below are Not Implemented in this book.
-/// </summary
+/// </summary>
+
+
 public enum eWeaponType
 {
     none,       // The default / no weapon
@@ -53,6 +55,8 @@ public class WeaponDefinition
 
 public class Weapon : MonoBehaviour
 {
+    private bool isFiring = false;
+    private AudioSource audioSource;
     static public Transform PROJECTILE_ANCHOR;
 
     [Header("Dynamic")]                                                        // a
@@ -67,13 +71,15 @@ public class Weapon : MonoBehaviour
 
     void Start()
     {
+        
         // Set up PROJECTILE_ANCHOR if it has not already been done
         if (PROJECTILE_ANCHOR == null)
         {                                       // b
             GameObject go = new GameObject("_ProjectileAnchor");
             PROJECTILE_ANCHOR = go.transform;
         }
-
+        audioSource = GetComponent<AudioSource>();
+        
         shotPointTrans = transform.GetChild(0);                              // c
 
         // Call SetType() for the default _type set in the Inspector
@@ -148,6 +154,9 @@ public class Weapon : MonoBehaviour
                 p.vel = vel;
                 break;
 
+            case eWeaponType.laser:
+                StartCoroutine(FireLaser());
+                break;
         }
     }
 
@@ -165,6 +174,99 @@ public class Weapon : MonoBehaviour
         nextShotTime = Time.time + def.delayBetweenShots;                    // p
         return (p);
     }
+    private IEnumerator FireLaser()
+{
+    isFiring = true;
+
+    // Play laser sound
+    if (audioSource != null)
+    {
+        audioSource.Play();
+    }
+
+    // Create or get the LineRenderer
+    LineRenderer lineRenderer = GetComponent<LineRenderer>();
+    if (lineRenderer == null)
+    {
+        lineRenderer = gameObject.AddComponent<LineRenderer>();
+    }
+
+    // Set LineRenderer properties
+    lineRenderer.startWidth = 0.2f;
+    lineRenderer.endWidth = 0.2f;
+    lineRenderer.positionCount = 2;
+    lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+    lineRenderer.startColor = Color.red;
+    lineRenderer.endColor = Color.yellow;
+
+    float laserDuration = 2.0f;
+    float damageInterval = 0.1f;
+    float elapsedTime = 0;
+    float laserLength = 20f; // Adjust this to change the laser length
+
+    while (elapsedTime < laserDuration)
+    {
+        Vector3 laserStart = shotPointTrans.position;
+        Vector3 laserEnd = laserStart + (Vector3.up * laserLength);
+
+        // Detect multiple enemies in the path
+        RaycastHit[] hits = Physics.RaycastAll(laserStart, Vector3.up, laserLength);
+
+        foreach (RaycastHit hit in hits)
+        {
+            Enemy enemy = hit.collider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.health -= def.damagePerSec * damageInterval;
+
+                // Destroy enemy if health drops below zero
+                if (enemy.health <= 0)
+                {
+                    Score.instance.AddScore(enemy.score);
+                    Destroy(enemy.gameObject);
+                }
+            }
+        }
+
+        /*foreach (RaycastHit hit in hits)
+        {
+            Enemy enemy = hit.collider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                // Apply damage over time to enemies hit by the laser
+                enemy.health -= def.damagePerSec * damageInterval;
+
+                // If health is below zero, trigger the OnCollisionEnter method to handle destruction
+                if (enemy.health <= 0)
+                {
+                    // Call the OnCollisionEnter logic manually
+                    enemy.SendMessage("OnCollisionEnter", new Collision { gameObject = gameObject });
+                }
+            }
+        }*/
+
+
+        // Update LineRenderer
+        if (hits.Length > 0)
+        {
+            laserEnd = hits[0].point; // Adjust laser to stop at the first hit object
+        }
+
+        lineRenderer.SetPosition(0, laserStart);
+        lineRenderer.SetPosition(1, laserEnd);
+
+        elapsedTime += damageInterval;
+        yield return new WaitForSeconds(damageInterval);
+    }
+
+    // Stop laser sound
+    if (audioSource != null)
+    {
+        audioSource.Stop();
+    }
+
+    Destroy(lineRenderer);
+    isFiring = false;
 }
 
-
+}
