@@ -65,8 +65,22 @@ public class Weapon : MonoBehaviour
     private GameObject weaponModel;
     private Transform shotPointTrans;
 
+    [Header("Weapon Sounds")]
+    public AudioClip[] blasterSounds;  // Multiple variants for blaster
+    public AudioClip spreadSound;     // Single sound for spread weapon
+    public AudioClip missileSound;    // Single sound for missiles
+    public AudioClip laserSound;      // Single sound for laser
+
+    private AudioSource audioSource;
+
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioSource.playOnAwake = false;
+
         // Set up PROJECTILE_ANCHOR if it has not already been done
         if (PROJECTILE_ANCHOR == null)
         {                                       // b
@@ -130,6 +144,7 @@ public class Weapon : MonoBehaviour
             case eWeaponType.blaster:
                 p = MakeProjectile();
                 p.vel = vel;
+                PlayRandomBlasterSound();
                 break;
 
             case eWeaponType.spread:                                         // l
@@ -141,11 +156,13 @@ public class Weapon : MonoBehaviour
                 p = MakeProjectile();
                 p.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
                 p.vel = p.transform.rotation * vel;
+                PlaySound(spreadSound);
                 break;
 
             case eWeaponType.missile:
                 p = MakeProjectile();
                 p.vel = vel;
+                PlaySound(missileSound);
                 break;
 
         }
@@ -165,6 +182,23 @@ public class Weapon : MonoBehaviour
         nextShotTime = Time.time + def.delayBetweenShots;                    // p
         return (p);
     }
+    
+    private void PlayRandomBlasterSound()
+    {
+        if (blasterSounds == null || blasterSounds.Length == 0) return;
+        
+        // Play random blaster sound without pitch/volume modification
+        AudioClip clip = blasterSounds[Random.Range(0, blasterSounds.Length)];
+        audioSource.PlayOneShot(clip);
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null) {
+            audioSource.PlayOneShot(clip);
+        }
+    }
+
 }
 
 

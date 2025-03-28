@@ -58,6 +58,14 @@ MonoBehaviour:
     delayBetweenShots: 0
     velocity: 50
   nextShotTime: 0
+  blasterSounds:
+  - {fileID: 8300000, guid: c3fd63b9762857743a5f7ce1c434c448, type: 3}
+  - {fileID: 8300000, guid: fa27a9e4d7c5cb842adb91b6c82c3964, type: 3}
+  - {fileID: 8300000, guid: 4102c322d7f0c4e4488d558ec93e066e, type: 3}
+  - {fileID: 8300000, guid: 95dfb16bef4e04740a21cf1c34b96dc5, type: 3}
+  spreadSound: {fileID: 8300000, guid: adefe994ccd691d4ea400e153c79efbb, type: 3}
+  missileSound: {fileID: 0}
+  laserSound: {fileID: 0}
 --- !u!1 &5153081989183711193
 GameObject:
   m_ObjectHideFlags: 0
